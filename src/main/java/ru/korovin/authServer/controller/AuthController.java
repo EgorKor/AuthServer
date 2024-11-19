@@ -16,6 +16,8 @@ import ru.korovin.authServer.domain.dto.JwtResponse;
 import ru.korovin.authServer.domain.exception.ResourceNotFoundException;
 import ru.korovin.authServer.domain.model.User;
 import ru.korovin.authServer.repository.UserRepository;
+import ru.korovin.authServer.service.JWTCreationService;
+import ru.korovin.authServer.service.JWTVerificationService;
 import ru.korovin.authServer.service.UserService;
 
 import java.util.Objects;
@@ -25,25 +27,20 @@ import java.util.Optional;
 @RequestMapping("/api/v1/auth")
 @RestController
 public class AuthController {
-    private final JWTVerifier jwtVerifier;
     private final UserService userService;
-    private final Environment environment;
+    private final JWTCreationService jwtCreationService;
+    private final JWTVerificationService jwtVerificatioService;
 
     @PostMapping
     public JwtResponse authenticate(@RequestBody JwtRequest request){
         userService.getUserByHash(request.getHash());
-        return new JwtResponse(JWT
-                .create()
-                .withClaim("hash",request.getHash())
-                .sign(Algorithm.HMAC256(Objects.requireNonNull(environment.getProperty("jwt.secret")))));
+        return new JwtResponse(jwtCreationService.createJWT(request));
     }
 
     @PostMapping("/validate")
     public GetAccessResponse hasAccess(@RequestBody GetAccessRequest request){
         try{
-            DecodedJWT decodedJWT = jwtVerifier.verify(request.getToken());
-            String hash = decodedJWT.getClaim("hash").asString();
-            userService.getUserByHash(hash);
+            jwtVerificatioService.verify(request.getToken());
         }catch (ResourceNotFoundException | JWTVerificationException e){
             return new GetAccessResponse(false);
         }
