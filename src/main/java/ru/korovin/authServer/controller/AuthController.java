@@ -1,27 +1,16 @@
 package ru.korovin.authServer.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import ru.korovin.authServer.domain.dto.GetAccessRequest;
 import ru.korovin.authServer.domain.dto.GetAccessResponse;
 import ru.korovin.authServer.domain.dto.JwtRequest;
 import ru.korovin.authServer.domain.dto.JwtResponse;
 import ru.korovin.authServer.domain.exception.ResourceNotFoundException;
-import ru.korovin.authServer.domain.model.User;
-import ru.korovin.authServer.repository.UserRepository;
 import ru.korovin.authServer.service.JWTCreationService;
 import ru.korovin.authServer.service.JWTVerificationService;
 import ru.korovin.authServer.service.UserService;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -29,7 +18,7 @@ import java.util.Optional;
 public class AuthController {
     private final UserService userService;
     private final JWTCreationService jwtCreationService;
-    private final JWTVerificationService jwtVerificatioService;
+    private final JWTVerificationService jwtVerificationService;
 
     @PostMapping
     public JwtResponse authenticate(@RequestBody JwtRequest request){
@@ -40,7 +29,7 @@ public class AuthController {
     @PostMapping("/validate")
     public GetAccessResponse hasAccess(@RequestBody GetAccessRequest request){
         try{
-            jwtVerificatioService.verify(request.getToken());
+            jwtVerificationService.verify(request.getToken());
         }catch (ResourceNotFoundException | JWTVerificationException e){
             return new GetAccessResponse(false);
         }

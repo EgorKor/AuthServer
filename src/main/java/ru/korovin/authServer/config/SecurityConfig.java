@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final Environment environment;
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+    public InMemoryUserDetailsManager userDetailsService() {
         return new InMemoryUserDetailsManager();
     }
 
@@ -33,9 +33,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(
                 req -> req.requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
         )
-                .userDetailsService(userDetailsService(passwordEncoder()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
@@ -47,8 +46,5 @@ public class SecurityConfig {
         return JWT.require(Algorithm.HMAC256(Objects.requireNonNull(environment.getProperty("jwt.secret")))).build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+
 }
