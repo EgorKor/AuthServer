@@ -13,7 +13,7 @@ public class UserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         userRepository.deleteAll();
-        User user = new User(null,"100", "Egor","Korovin","Alexandrovich");
+        User user = new User(null,"b23cf2d0fb74b0ffa0cf4c70e6e04926", "Egor","Korovin","Alexandrovich");
         userRepository.save(user);
     }
 }

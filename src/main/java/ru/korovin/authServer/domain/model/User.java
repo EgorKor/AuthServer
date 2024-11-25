@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "rf_hash",nullable = false, unique = true)
+    @Column(name = "rf_hash",nullable = false, unique = true, length = 32)
     private String hash;
     @Column(nullable = false)
     private String name;
