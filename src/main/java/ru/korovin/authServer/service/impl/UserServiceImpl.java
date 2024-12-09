@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public User getUserByHash(String hash) {
-        return userRepository.findByHash(hash).orElseThrow(() -> new ResolutionException("No such user in database with hash %d".formatted(hash)));
+        return userRepository.findByHash(hash).orElseThrow(() -> new ResolutionException("No such user in database with hash %s".formatted(hash)));
     }
 
 }
